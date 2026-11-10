@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Achados de hoje | Radar da Economia</title>
+<link rel="icon" type="image/png" href="https://radardaeconomia.netlify.app/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
+<!-- Página do link da bio. Visita = evento próprio VisitaAchados (sem PageView nem Lead, para não misturar com o anúncio).
+     Origem vem de ?o= (bio, story, comentario). Os produtos vêm de achados.json, gerado por montar_achados.py. -->
+<script>
+var origem = (new URLSearchParams(location.search).get('o') || 'bio').replace(/[^a-z0-9_-]/gi, '').slice(0, 30);
+new Image().src = 'https://www.facebook.com/tr?id=4510513355827556&ev=VisitaAchados&noscript=1&cd[origem]=' +
+  encodeURIComponent(origem) + '&dl=' + encodeURIComponent(location.href) + '&ts=' + Date.now();
+</script>
+<style>
+  :root { --tinta: #2E2028; --tinta-suave: #6B5A63; --marca: #A3235F; --marca-clara: #D96BA0;
+          --rosa-fundo: #FDF2F7; --rosa-borda: #F0B9D3; --verde: #1F8A4C; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: linear-gradient(135deg, #FDF2F7 0%, #FFFFFF 55%, #FBEAF2 100%) fixed;
+         color: var(--tinta); font-family: Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  main { max-width: 560px; margin: 0 auto; padding: 22px 16px 40px; text-align: center; }
+  .logo { width: 72px; height: 72px; border-radius: 50%; }
+  h1 { margin: 10px 0 4px; font-size: 26px; font-weight: 800; color: var(--marca); }
+  .sub { margin: 0 0 18px; color: var(--tinta-suave); font-size: 14px; }
+  .grupo { display: block; margin: 0 0 26px; padding: 15px 18px; border-radius: 999px; color: #fff; font-weight: 700;
+           text-decoration: none; background: linear-gradient(135deg, #25A85A, var(--verde));
+           box-shadow: 0 6px 18px rgba(31, 138, 76, .3); }
+  .grupo small { display: block; font-weight: 400; font-size: 12.5px; opacity: .9; }
+  h2 { margin: 26px 0 4px; font-size: 18px; text-align: left; }
+  .data { margin: 0 0 12px; font-size: 12.5px; color: var(--tinta-suave); text-align: left; }
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .item { display: flex; flex-direction: column; background: #fff; border-radius: 14px; overflow: hidden;
+          box-shadow: 0 4px 16px rgba(163, 35, 95, .1); text-decoration: none; color: inherit; text-align: left; }
+  .item img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: var(--rosa-fundo); }
+  .item div { padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .item b { font-size: 13.5px; line-height: 1.3; }
+  .item span { font-size: 13px; color: var(--marca); font-weight: 700; }
+  .item em { margin-top: auto; font-style: normal; font-size: 12.5px; font-weight: 700; color: #fff; background: var(--marca);
+             border-radius: 999px; padding: 7px 0; text-align: center; }
+  .vazio { color: var(--tinta-suave); }
+  footer { margin-top: 30px; font-size: 11.5px; color: var(--tinta-suave); line-height: 1.5; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="https://radardaeconomia.netlify.app/logo.png" alt="Radar da Economia" width="72" height="72">
+  <h1>achados de hoje</h1>
+  <p class="sub">os produtos dos nossos posts, com o link direto</p>
+  <a class="grupo" href="https://radardaeconomia.netlify.app/ig?o=achados">entrar no grupo vip de achadinhos<small>Shopee e Mercado Livre, é grátis</small></a>
+  <div id="lista"><p class="vazio">carregando os achados…</p></div>
+  <footer>
+    Preços conferidos na data indicada; podem mudar na loja.<br>
+    Links de afiliado: você não paga nada a mais e ajuda o Radar a continuar.<br>
+    <a href="https://radardaeconomia.netlify.app/privacidade.html">Privacidade</a>
+  </footer>
+</main>
+<script>
+function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+fetch('achados.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+  var html = '';
+  d.posts.forEach(function (p) {
+    html += '<h2>' + esc(p.tema) + '</h2><p class="data">preços conferidos em ' + esc(p.data_preco) + '</p><div class="grade">';
+    p.produtos.forEach(function (x) {
+      html += '<a class="item" href="' + esc(x.link) + '" target="_blank" rel="noopener sponsored">' +
+        (x.foto ? '<img loading="lazy" src="' + esc(x.foto) + '" alt="">' : '') +
+        '<div><b>' + esc(x.nome) + '</b><span>' + esc(x.preco) + '</span><em>ver na loja</em></div></a>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('lista').innerHTML = html || '<p class="vazio">os achados da semana entram aqui em breve.</p>';
+}).catch(function () {
+  document.getElementById('lista').innerHTML = '<p class="vazio">não deu para carregar agora. Entra no grupo que lá tem tudo 💛</p>';
+});
+</script>
+</body>
+</html>
